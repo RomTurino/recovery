@@ -13,7 +13,8 @@ from function import *
 dialog_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
-        BEGIN: [MessageHandler(Filters.text & ~Filters.command, begin)]
+        BEGIN: [MessageHandler(Filters.text & ~Filters.command, begin)],
+        GAME: [MessageHandler(Filters.text & ~Filters.command, game)]
     },
     fallbacks=[CommandHandler('end',end)]
     
