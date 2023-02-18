@@ -10,6 +10,7 @@ def hello(update: Update, context: CallbackContext):
     update.message.reply_text(f'Привет, {name}!')
 
 def start(update: Update, context: CallbackContext):
+    update.message.reply_animation('https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/5eeea355389655.59822ff824b72.gif')
     update.message.reply_text('''Меня зовут Леонид. Я знаю команды: 
     /hello - Приветствие
     /bye - Прощание
@@ -25,6 +26,7 @@ def bye(update: Update, context: CallbackContext):
 
 def send_contact(update: Update, context: CallbackContext):
     update.message.reply_contact('88005553535', 'Илон','Маск')
+
     
 def echo(update: Update, context: CallbackContext):
     args = context.args
@@ -55,11 +57,49 @@ def get_numbers(update: Update, context: CallbackContext):
     return num1, num2
     
 
+def get_numbers(update: Update, context: CallbackContext):
+    numbers = context.args
+    if len(numbers) != 2:
+        update.message.reply_text('Необходимо ввести два числа через пробел в формате /команда <число1> <число2>')
+        return None
+    try:
+        num1 = int(numbers[0])
+        num2 = int(numbers[1])
+        return num1, num2
+    except ValueError:
+        update.message.reply_text('Вы ввели не числа. Необходимо ввести два числа через пробел в формате /команда <число1> <число2>')
+        return None
+
+
 def plus(update: Update, context: CallbackContext):
-    if get_numbers(update,context):#если не False
-        num1, num2 = get_numbers(update,context)#два числа записываются в две переменные
-        result = num1 + num2 # складываем числа
-        update.message.reply_text(result) # выводим в мессенджер
+    nums = get_numbers(update, context)
+    if nums is not None:
+        num1, num2 = nums
+        context.bot.send_message(update.effective_chat.id, f'{num1} + {num2} = {num1+num2}')
+        
+    
+def evaluation(update: Update, context: CallbackContext):
+    expression = update.message.text
+    if 'бл' in expression:
+        update.message.reply_text('Слово началось на бл? Надеюсь, не мат')
+        return None
+    try:
+        update.message.reply_text(f'{expression} = {eval(expression)}')
+    except:
+        update.message.reply_text('Вы ввели не пример')   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    # if get_numbers(update,context):#если не False
+    #     num1, num2 = get_numbers(update,context)#два числа записываются в две переменные
+    #     result = num1 + num2 # складываем числа
+    #     update.message.reply_text(result) # выводим в мессенджер
     
 
 def minus(update: Update, context: CallbackContext):
@@ -104,7 +144,7 @@ start_handler = CommandHandler('start', start)
 hello_handler = CommandHandler('hello', hello)
 bye_handler = CommandHandler('bye', bye)
 contact_handler = CommandHandler('contact', send_contact)
-joke_handler = MessageHandler(Filters.text, make_jokes)
+eval_handler = MessageHandler(Filters.text, evaluation)
 
 
 dispatcher.add_handler(plus_handler)
@@ -116,7 +156,7 @@ dispatcher.add_handler(hello_handler)
 dispatcher.add_handler(bye_handler)
 dispatcher.add_handler(contact_handler)
 dispatcher.add_handler(echo_handler)
-dispatcher.add_handler(joke_handler)
+dispatcher.add_handler(eval_handler)
 
 
 

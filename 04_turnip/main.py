@@ -1,32 +1,30 @@
 from config import TOKEN
 from telegram.ext import (
     Updater,
-    Filters,
-    MessageHandler,
     ConversationHandler,
-    CommandHandler
+    CommandHandler,
+    MessageHandler,
+    Filters
     )
-
 from function import *
 
-
-dialog_handler = ConversationHandler(
+conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
         BEGIN: [MessageHandler(Filters.text & ~Filters.command, begin)],
         GAME: [MessageHandler(Filters.text & ~Filters.command, game)]
     },
-    fallbacks=[CommandHandler('end',end)]
-    
+    fallbacks=[CommandHandler('end', end)]
 )
+
 
 updater = Updater(TOKEN)
 dispatcher = updater.dispatcher
 
-dispatcher.add_handler(dialog_handler)
+dispatcher.add_handler(conv_handler)
 
-
-
-print('Приложение запущено')
+print('Сервер запущен!')
 updater.start_polling()
-updater.idle()  # ctrl + C
+updater.idle() #ctrl + c
+
+
