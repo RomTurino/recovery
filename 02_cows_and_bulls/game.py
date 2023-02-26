@@ -15,7 +15,9 @@ dispatcher = updater.dispatcher
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
+          NAME: [MessageHandler(Filters.regex(f"^({GO})$"), get_name)],
           BEGIN: [MessageHandler(Filters.text & ~Filters.command, begin)],
+          LEVEL: [MessageHandler(Filters.regex(f"^({EASY}|{MEDIUM}|{HARD})$"), level)],
           GAME: [MessageHandler(Filters.text & ~Filters.command, game)]  
         },
     fallbacks=[CommandHandler('end', end)]
