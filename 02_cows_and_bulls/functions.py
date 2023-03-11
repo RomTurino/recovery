@@ -6,6 +6,7 @@ from telegram import (
 )
 import random
 import pymorphy2
+from stickers import *
 
 morph = pymorphy2.MorphAnalyzer()
 
@@ -24,6 +25,7 @@ def start(update: Update, context: CallbackContext):
         one_time_keyboard=True,
         input_field_placeholder=f'Нажми на кнопку "{GO}", поиграем!'
     )
+    update.message.reply_sticker(START_STICKER)
     update.message.reply_text(
         'В этой игре компьютер загадывает слово, и говорит тебе, сколько в нем букв')
     update.message.reply_text('Ты говоришь слово из такого же количества букв')
@@ -44,6 +46,7 @@ def get_name(update: Update, context: CallbackContext):
         one_time_keyboard=True
     )
     full_name = update.effective_chat.full_name
+    
     update.message.reply_text(f"Можно называть вас {full_name}? Если нет, то введите свое имя, иначе - нажмите {SKIP}", reply_markup=keyboard)
     return BEGIN
 
@@ -59,6 +62,7 @@ def begin(update: Update, context: CallbackContext):
         one_time_keyboard=True,
         input_field_placeholder=f'{EASY} - 3 буквы, {MEDIUM} - 4 буквы, {HARD} - 5 букв'
     )
+    
     update.message.reply_text(f'Выбери уровень сложности, {name}, или нажми /end!', reply_markup=keyboard)
     # если ключа "секретное число" нет в рюкзаке
     # secret_number = random.randint(1000, 9999)
@@ -89,9 +93,11 @@ def level(update: Update, context: CallbackContext):
 
 
 def game(update: Update, context: CallbackContext):  # callback'
-    my_word = update.message.text
-    tag = morph.parse(my_word)[0]
+    my_word = update.message.text.lower()
+    tag = morph.parse(my_word)[0] # набор граммем (число, род, падеж, время)
+    # 0 - это первый падеж (именительный)
     secret_word = context.user_data['word']  # достаем из рюкзака
+    update.message.reply_sticker()
     
     if len(my_word) != len(secret_word) and not my_word.isalpha():
         update.message.reply_text(f"Нужно вводить слова из {len(secret_word)} букв")
@@ -102,12 +108,12 @@ def game(update: Update, context: CallbackContext):  # callback'
         return
     cows = 0
     bulls = 0
-    for mesto, letter in enumerate(my_word):
-        if letter in secret_word:
-            if my_word[mesto] == secret_word[mesto]:
-                bulls += 1
-            else:
-                cows += 1
+    for mesto, letter in enumerate(my_word): # проходимся по букве и ее месту в слове
+        if letter in secret_word: # если  буква  в секретном слове
+            if my_word[mesto] == secret_word[mesto]: # если местоположение букв в моем и секретном слове совпадает
+                bulls += 1 # прибавляем быков
+            else: # если местоположение не совпадает
+                cows += 1 # прибавляем коров
     update.message.reply_text(f'В вашем слове {cows} коров и {bulls} быков')
     if bulls == len(secret_word):
         update.message.reply_text('Вы угадали! Вы красавчик. Если хотите начать заново, нажмите /start')
