@@ -27,23 +27,28 @@ def start(update: Update, context: CallbackContext):
 
 
 def game(update: Update, context: CallbackContext):
-    questions = read_csv()
+    questions = read_csv() # берем все вопросы
     random.shuffle(questions)
+
+
+
 
 def end(update: Update, context: CallbackContext):  # точка выхода
     name = context.user_data['имя']
     update.message.reply_text(f"Значит, ты выбрал конец, {name}. Если хотите начать заново, нажмите /start")
     return ConversationHandler.END
 
+
 def read_csv():
     with open('05_quiz\вопросы.csv', 'r', encoding='utf-8') as file:
         quest = list(csv.reader(file, delimiter='|'))
         return quest
 
+    
+
 
 def write_csv():
     with open('05_quiz\вопросы.csv', 'a', encoding='utf-8') as file:
-        worker = csv.writer(file, delimiter='|',
-                            lineterminator='\n')  # \n - это перенос
+        worker = csv.writer(file, delimiter='|',lineterminator='\n')  # \n - это перенос
         worker.writerow(['Какая столица Татарстана?',
                         'Казань', 'Астана', 'Елабуга', 'Челны'])

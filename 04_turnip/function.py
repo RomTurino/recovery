@@ -1,8 +1,8 @@
 from telegram.ext import CallbackContext, ConversationHandler
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
-import pymorphy2
+# import pymorphy2
 
-morph = pymorphy2.MorphAnalyzer()
+# morph = pymorphy2.MorphAnalyzer()
 BEGIN, GAME = 1, 2
 GO = "Вперед"
 
@@ -26,6 +26,16 @@ def start(update: Update, context: CallbackContext):
 
 
 def begin(update: Update, context: CallbackContext):  # первый шаг разговора
+    update.message.reply_text('''
+                            Посадил дед репку. Выросла репка большая-пребольшая.
+                            Стал дед репку из земли тянуть. 
+                            Тянет-потянет - вытянуть не может.
+                            Кого позвал дедка?
+                            ''', reply_markup=ReplyKeyboardRemove())
+    
+    
+    
+    
     heroes = [["дедку"], ["дедка", "репку"]]
     context.user_data["heroes"] = heroes # сохраняем в словарь 
     update.message.reply_text('''
@@ -47,6 +57,9 @@ def end(update: Update, context: CallbackContext):  # точка выхода
 
 def game(update: Update, context: CallbackContext):
     text = update.message.text
+    
+    
+    
     text = morph.parse(text)[0] # тег
     if text.tag.animacy == "anim": # если одушевленный
         nomn = text.inflect({'nomn'}).word  # именительный падеж
