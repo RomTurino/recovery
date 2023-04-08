@@ -15,7 +15,7 @@ dispatcher = updater.dispatcher
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)], # точка входа в разговор
     states={ # этапы разговора
-           
+        GAME: [MessageHandler(Filters.text & ~Filters.command, game)]
         },
     fallbacks=[CommandHandler('end', end)] # точка выхода из разговора
 )
