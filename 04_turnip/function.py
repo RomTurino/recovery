@@ -70,7 +70,8 @@ def end(update: Update, context: CallbackContext):  # точка выхода
 #     answer += "Тянут-потянут - вытянуть не могут. Кого позовем еще?"    
 #     update.message.reply_text(f'{answer}')
     
-def game(update: Update, context: CallbackContext):    
+def game(update: Update, context: CallbackContext):  
+    text = update.message.text  
     text = morph.parse(text)[0] # тег
     if text.tag.animacy == "anim": # если одушевленный
         nomn = text.inflect({'nomn'}).word  # именительный падеж
@@ -81,6 +82,10 @@ def game(update: Update, context: CallbackContext):
         answer = f"Я {nomn}. Буду помогать. "      
         for nom, acc in heroes[1:]: 
             answer += f"{nom} за {acc}. "
+        if "мыш" in nomn:
+            answer += "Тянут-потянут - и вытянули репку! Сыграем еще? Нажми /start"
+            return ConversationHandler.END
+                
         answer += "Тянут-потянут - вытянуть не могут. Кого позовем еще?"    
         update.message.reply_text(f'{answer}')
     else: #если персонаж неодушевленный 

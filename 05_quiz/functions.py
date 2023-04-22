@@ -28,6 +28,7 @@ def start(update: Update, context: CallbackContext):
         f'Чтобы начать, нажми на "{GO}"', reply_markup=keyboard)
     questions = read_csv()  # берем все вопросы
     random.shuffle(questions)  # перемешиваем вопросы
+    
     questions = questions[:QUESTIONS_ON_ROUND]  # срез
     context.user_data["вопросы"] = questions  # сохранили в рюкзак
     context.user_data['right_answer'] = GO
@@ -56,8 +57,8 @@ def game(update: Update, context: CallbackContext):
     answers = questions.pop()  # достаем последний вопрос из списка
     question_text = answers.pop(0)  # взяли текст вопроса
     right_answer = answers[0]  # первый ответ - правильный
+    random.shuffle(answers) # перемешиваем ответы
     context.user_data['right_answer'] = right_answer # сохраняем правильный ответ
-    random.shuffle(answers)  # перемешиваем ответы
     mark_up = [answers[:2], answers[2:]]
     keyboard = ReplyKeyboardMarkup(
         keyboard=mark_up,
